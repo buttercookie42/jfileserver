@@ -19,8 +19,7 @@
 
 package org.filesys.server.auth.spnego;
 
-import org.ietf.jgss.GSSException;
-import org.ietf.jgss.Oid;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
 /**
  * OID Class
@@ -47,12 +46,12 @@ public class OID {
     public static final String ID_SPNEGO_EX = "1.3.6.1.4.1.311.2.2.30";
 
     // OIDs
-    public static Oid SPNEGO;
-    public static Oid KERBEROS5;
-    public static Oid MSKERBEROS5;
-    public static Oid KRB5USERTOUSER;
-    public static Oid NTLMSSP;
-    public static Oid SPNEGO_EX;
+    public static ASN1ObjectIdentifier SPNEGO;
+    public static ASN1ObjectIdentifier KERBEROS5;
+    public static ASN1ObjectIdentifier MSKERBEROS5;
+    public static ASN1ObjectIdentifier KRB5USERTOUSER;
+    public static ASN1ObjectIdentifier NTLMSSP;
+    public static ASN1ObjectIdentifier SPNEGO_EX;
 
     /**
      * Static initializer
@@ -61,17 +60,17 @@ public class OID {
 
         // Create the OIDs
         try {
-            SPNEGO = new Oid(ID_SPNEGO);
+            SPNEGO = new ASN1ObjectIdentifier(ID_SPNEGO);
 
-            KERBEROS5 = new Oid(ID_KERBEROS5);
-            MSKERBEROS5 = new Oid(ID_MSKERBEROS5);
-            KRB5USERTOUSER = new Oid(ID_KRB5USERTOUSER);
+            KERBEROS5 = new ASN1ObjectIdentifier(ID_KERBEROS5);
+            MSKERBEROS5 = new ASN1ObjectIdentifier(ID_MSKERBEROS5);
+            KRB5USERTOUSER = new ASN1ObjectIdentifier(ID_KRB5USERTOUSER);
 
-            NTLMSSP = new Oid(ID_NTLMSSP);
+            NTLMSSP = new ASN1ObjectIdentifier(ID_NTLMSSP);
 
-            SPNEGO_EX = new Oid(ID_SPNEGO_EX);
+            SPNEGO_EX = new ASN1ObjectIdentifier(ID_SPNEGO_EX);
         }
-        catch (GSSException ex) {
+        catch (Exception ex) {
         }
     }
 }

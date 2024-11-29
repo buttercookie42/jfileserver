@@ -20,6 +20,7 @@
 
 package org.filesys.server.auth;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.filesys.debug.Debug;
 import org.filesys.netbios.RFCNetBIOSProtocol;
 import org.filesys.server.auth.ntlm.*;
@@ -36,7 +37,6 @@ import org.filesys.smb.server.*;
 import org.filesys.util.DataBuffer;
 import org.filesys.util.DataPacker;
 import org.filesys.util.HexDump;
-import org.ietf.jgss.Oid;
 import org.springframework.extensions.config.ConfigElement;
 
 import javax.crypto.Cipher;
@@ -139,7 +139,7 @@ public class NTLMOnlySMBAuthenticator extends SMBAuthenticator {
         if (useSpnego != null) {
 
             // Create the Oid list for the SPNEGO NegTokenInit
-            List<Oid> mechTypes = new ArrayList<Oid>();
+            List<ASN1ObjectIdentifier> mechTypes = new ArrayList<ASN1ObjectIdentifier>();
 
             mechTypes.add(OID.NTLMSSP);
 

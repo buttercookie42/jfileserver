@@ -50,6 +50,7 @@ import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import javax.security.sasl.RealmCallback;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.filesys.debug.Debug;
 import org.filesys.netbios.RFCNetBIOSProtocol;
 import org.filesys.server.auth.kerberos.KerberosDetails;
@@ -69,7 +70,6 @@ import org.filesys.util.DataBuffer;
 import org.filesys.util.DataPacker;
 import org.filesys.util.HexDump;
 import org.springframework.extensions.config.ConfigElement;
-import org.ietf.jgss.Oid;
 
 /**
  * Enterprise SMB Authenticator Class
@@ -294,7 +294,7 @@ public class EnterpriseSMBAuthenticator extends SMBAuthenticator implements Call
             }
 
             // Create the Oid list for the SPNEGO NegTokenInit, include NTLMSSP for fallback
-            List<Oid> mechTypes = new ArrayList<Oid>();
+            List<ASN1ObjectIdentifier> mechTypes = new ArrayList<ASN1ObjectIdentifier>();
 
             mechTypes.add(OID.MSKERBEROS5);
             mechTypes.add(OID.KERBEROS5);
@@ -359,7 +359,7 @@ public class EnterpriseSMBAuthenticator extends SMBAuthenticator implements Call
             if (useSpnego != null) {
 
                 // Create the Oid list for the SPNEGO NegTokenInit
-                List<Oid> mechTypes = new ArrayList<Oid>();
+                List<ASN1ObjectIdentifier> mechTypes = new ArrayList<ASN1ObjectIdentifier>();
 
                 mechTypes.add(OID.NTLMSSP);
 
@@ -1412,7 +1412,7 @@ public class EnterpriseSMBAuthenticator extends SMBAuthenticator implements Call
                 krbDetails = (KerberosDetails) result;
 
                 // Determine the response OID
-                Oid respOid = null;
+                ASN1ObjectIdentifier respOid = null;
 
                 if (negToken.hasOid(OID.MSKERBEROS5)) {
                     respOid = OID.MSKERBEROS5;
@@ -2597,7 +2597,7 @@ public class EnterpriseSMBAuthenticator extends SMBAuthenticator implements Call
      * @param mechTypes List of OIDs
      * @return NegTokenInit
      */
-    protected NegTokenInit buildNegTokenInit( String srvName, List<Oid> mechTypes) {
+    protected NegTokenInit buildNegTokenInit(String srvName, List<ASN1ObjectIdentifier> mechTypes) {
 
         // Build the mechListMIC principle
         //

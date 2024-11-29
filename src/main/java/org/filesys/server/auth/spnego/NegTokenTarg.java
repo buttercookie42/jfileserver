@@ -22,6 +22,7 @@ package org.filesys.server.auth.spnego;
 
 import java.io.IOException;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.filesys.server.auth.SecurityBlob;
 import org.filesys.server.auth.asn.DERBuffer;
 import org.filesys.server.auth.asn.DEREnumerated;
@@ -30,8 +31,6 @@ import org.filesys.server.auth.asn.DEROctetString;
 import org.filesys.server.auth.asn.DEROid;
 import org.filesys.server.auth.asn.DERSequence;
 import org.filesys.util.HexDump;
-import org.ietf.jgss.GSSException;
-import org.ietf.jgss.Oid;
 
 /**
  * NegTokenTarg Class
@@ -47,7 +46,7 @@ public class NegTokenTarg {
     private SPNEGO.Result m_result = SPNEGO.Result.Invalid;
 
     // Supported mechanism
-    private Oid m_supportedMech;
+    private ASN1ObjectIdentifier m_supportedMech;
 
     // Response token
     private byte[] m_responseToken;
@@ -65,10 +64,10 @@ public class NegTokenTarg {
      * Class constructor
      *
      * @param result   SPNEGO.Result
-     * @param mech     Oid
+     * @param mech     ASN1ObjectIdentifier
      * @param response byte[]
      */
-    public NegTokenTarg(SPNEGO.Result result, Oid mech, byte[] response) {
+    public NegTokenTarg(SPNEGO.Result result, ASN1ObjectIdentifier mech, byte[] response) {
 
         m_result = result;
         m_supportedMech = mech;
@@ -87,9 +86,9 @@ public class NegTokenTarg {
     /**
      * Return the supported mech type Oid
      *
-     * @return Oid
+     * @return ASN1ObjectIdentifier
      */
-    public final Oid getSupportedMech() {
+    public final ASN1ObjectIdentifier getSupportedMech() {
         return m_supportedMech;
     }
 
@@ -193,9 +192,9 @@ public class NegTokenTarg {
 
                 DEROid derMech = (DEROid) derObj;
                 try {
-                    m_supportedMech = new Oid(derMech.getOid());
+                    m_supportedMech = new ASN1ObjectIdentifier(derMech.getOid());
                 }
-                catch (GSSException ex) {
+                catch (Exception ex) {
                     throw new IOException("Bad supportedMech OID");
                 }
             } else
