@@ -28,6 +28,7 @@ import org.ietf.jgss.GSSCredential;
 import org.ietf.jgss.GSSException;
 import org.ietf.jgss.GSSManager;
 import org.ietf.jgss.GSSName;
+import org.ietf.jgss.Oid;
 
 
 /**
@@ -90,7 +91,8 @@ public class SessionSetupPrivilegedAction implements PrivilegedAction {
     try {
       GSSManager gssManager = GSSManager.getInstance();
       GSSName serverGSSName = gssManager.createName(m_accountName, GSSName.NT_USER_NAME);
-      GSSCredential serverGSSCreds = gssManager.createCredential(serverGSSName, GSSCredential.INDEFINITE_LIFETIME, OID.KERBEROS5,
+      GSSCredential serverGSSCreds = gssManager.createCredential(serverGSSName, GSSCredential.INDEFINITE_LIFETIME,
+              new Oid(OID.ID_MSKERBEROS5),
           GSSCredential.ACCEPT_ONLY);
 
       GSSContext serverGSSContext = gssManager.createContext(serverGSSCreds);
