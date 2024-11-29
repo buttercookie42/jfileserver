@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.filesys.server.auth.SecurityBlob;
 import org.filesys.server.auth.asn.DERBitString;
 import org.filesys.server.auth.asn.DERBuffer;
@@ -32,8 +33,6 @@ import org.filesys.server.auth.asn.DERObject;
 import org.filesys.server.auth.asn.DEROctetString;
 import org.filesys.server.auth.asn.DEROid;
 import org.filesys.server.auth.asn.DERSequence;
-import org.ietf.jgss.GSSException;
-import org.ietf.jgss.Oid;
 
 /**
  * NegTokenInit Class
@@ -45,7 +44,7 @@ import org.ietf.jgss.Oid;
 public class NegTokenInit {
 
     // Mech types list
-    private Oid[] m_mechTypes;
+    private ASN1ObjectIdentifier[] m_mechTypes;
 
     // Mech types list object bytes
     private byte[] m_mechTypesByts;
@@ -68,10 +67,10 @@ public class NegTokenInit {
     /**
      * Class constructor for encoding
      *
-     * @param mechTypes     Oid[]
+     * @param mechTypes     ASN1ObjectIdentifier[]
      * @param mechPrincipal String
      */
-    public NegTokenInit(Oid[] mechTypes, String mechPrincipal) {
+    public NegTokenInit(ASN1ObjectIdentifier[] mechTypes, String mechPrincipal) {
         m_mechTypes = mechTypes;
         m_mecListMICPrincipal = mechPrincipal;
     }
@@ -79,13 +78,13 @@ public class NegTokenInit {
     /**
      * Class constructor for encoding
      *
-     * @param mechTypes     List of OIDs
+     * @param mechTypes     List of ASN1ObjectIdentifiers
      * @param mechPrincipal String
      */
-    public NegTokenInit(List<Oid> mechTypes, String mechPrincipal) {
+    public NegTokenInit(List<ASN1ObjectIdentifier> mechTypes, String mechPrincipal) {
 
         // Create the mechTypes array
-        m_mechTypes = new Oid[mechTypes.size()];
+        m_mechTypes = new ASN1ObjectIdentifier[mechTypes.size()];
         for (int i = 0; i < mechTypes.size(); i++)
             m_mechTypes[i] = mechTypes.get(i);
 
@@ -95,9 +94,9 @@ public class NegTokenInit {
     /**
      * Return the mechTypes OID list
      *
-     * @return Oid[]
+     * @return ASN1ObjectIdentifier[]
      */
-    public final Oid[] getOids() {
+    public final ASN1ObjectIdentifier[] getOids() {
         return m_mechTypes;
     }
 
@@ -131,14 +130,20 @@ public class NegTokenInit {
     /**
      * Check if the OID list contains the specified OID
      *
-     * @param oid Oid
+     * @param oid ASN1ObjectIdentifier
      * @return boolean
      */
-    public final boolean hasOid(Oid oid) {
+    public final boolean hasOid(ASN1ObjectIdentifier oid) {
         boolean foundOid = false;
 
-        if (m_mechTypes != null)
-            foundOid = oid.containedIn(m_mechTypes);
+        if (m_mechTypes != null) {
+            for (int i = 0; i < m_mechTypes.length; i++) {
+                if (m_mechTypes[i].equals(oid)) {
+                    foundOid = true;
+                    break;
+                }
+            }
+        }
 
         return foundOid;
     }
@@ -156,9 +161,9 @@ public class NegTokenInit {
      * Return the specified OID
      *
      * @param idx int
-     * @return OID
+     * @return ASN1ObjectIdentifier
      */
-    public final Oid getOidAt(int idx) {
+    public final ASN1ObjectIdentifier getOidAt(int idx) {
         if (m_mechTypes != null && idx >= 0 && idx < m_mechTypes.length)
             return m_mechTypes[idx];
         return null;
@@ -218,7 +223,7 @@ public class NegTokenInit {
 
             // The blob is already kerberos5, no need to parse
             if (derOid.getOid().equals(OID.ID_KERBEROS5)) {
-                m_mechTypes = new Oid[]{OID.KERBEROS5};
+                m_mechTypes = new ASN1ObjectIdentifier[] { OID.KERBEROS5 };
                 m_mechToken = buf;
                 return;
             }
@@ -257,7 +262,7 @@ public class NegTokenInit {
 
                 // Unpack the OID list (required)
                 DERSequence derOidSeq = (DERSequence) derObj;
-                m_mechTypes = new Oid[derOidSeq.numberOfObjects()];
+                m_mechTypes = new ASN1ObjectIdentifier[derOidSeq.numberOfObjects()];
                 int idx = 0;
 
                 for (int i = 0; i < derOidSeq.numberOfObjects(); i++) {
@@ -265,9 +270,9 @@ public class NegTokenInit {
                     if (derObj instanceof DEROid) {
                         derOid = (DEROid) derObj;
                         try {
-                            m_mechTypes[idx++] = new Oid(derOid.getOid());
+                            m_mechTypes[idx++] = new ASN1ObjectIdentifier(derOid.getOid());
                         }
-                        catch (GSSException ex) {
+                        catch (Exception ex) {
                             throw new IOException("Bad mechType OID");
                         }
                     }
@@ -337,7 +342,7 @@ public class NegTokenInit {
         mechTypesSeq.setTagNo(0);
 
         for (int i = 0; i < m_mechTypes.length; i++) {
-            Oid mechType = m_mechTypes[i];
+            ASN1ObjectIdentifier mechType = m_mechTypes[i];
             mechTypesSeq.addObject(new DEROid(mechType.toString()));
         }
 
