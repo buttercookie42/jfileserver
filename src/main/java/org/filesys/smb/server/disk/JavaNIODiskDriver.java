@@ -201,7 +201,7 @@ public class JavaNIODiskDriver implements DiskInterface {
             throws java.io.IOException {
 
         //  Get the full path for the new directory
-        String dirname = FileName.buildPath(tree.getContext().getDeviceName(), params.getPath(), null, java.io.File.separatorChar);
+        String dirname = buildPath(tree.getContext(), params.getPath(), null);
 
         //  Create the new directory
         File newDir = new File(dirname);
@@ -269,7 +269,7 @@ public class JavaNIODiskDriver implements DiskInterface {
 
         //  Get the full path for the directory
         JavaNIODeviceContext ctx = (JavaNIODeviceContext) tree.getContext();
-        Path dirPath = Paths.get( FileName.buildPath(ctx.getDeviceName(), dir, null, java.io.File.separatorChar));
+        Path dirPath = Paths.get(buildPath(ctx, dir, null));
 
         //  Check if the directory exists, and it is a directory
         if ( Files.exists( dirPath) && Files.isDirectory( dirPath)) {
@@ -321,7 +321,7 @@ public class JavaNIODiskDriver implements DiskInterface {
 
         //  Get the full path for the file
         JavaNIODeviceContext ctx = (JavaNIODeviceContext) tree.getContext();
-        Path filePath = Paths.get( FileName.buildPath(ctx.getDeviceName(), name, null, java.io.File.separatorChar));
+        Path filePath = Paths.get(buildPath(ctx, name, null));
 
         //  Check if the file exists, and it is a file
         if ( Files.exists( filePath) && Files.isDirectory( filePath) == false) {
@@ -392,7 +392,7 @@ public class JavaNIODiskDriver implements DiskInterface {
 
         //  Get the full path for the file
         JavaNIODeviceContext ctx = (JavaNIODeviceContext) tree.getContext();
-        Path filePath = Paths.get( FileName.buildPath(ctx.getDeviceName(), name, null, java.io.File.separatorChar));
+        Path filePath = Paths.get(buildPath(ctx, name, null));
 
         if ( Files.exists( filePath, LinkOption.NOFOLLOW_LINKS)) {
 
@@ -456,7 +456,7 @@ public class JavaNIODiskDriver implements DiskInterface {
 
         //  Get the full path for the file/directory
         JavaNIODeviceContext ctx = (JavaNIODeviceContext) tree.getContext();
-        String path = FileName.buildPath(ctx.getDeviceName(), name, null, java.io.File.separatorChar);
+        String path = buildPath(ctx, name, null);
 
         //  Build the file information for the file/directory
         FileInfo info = buildFileInformation(path, name);
@@ -692,7 +692,7 @@ public class JavaNIODiskDriver implements DiskInterface {
 
         //  Create a Java network file
         JavaNIODeviceContext ctx = (JavaNIODeviceContext) tree.getContext();
-        Path filePath = Paths.get( FileName.buildPath(ctx.getDeviceName(), params.getPath(), null, java.io.File.separatorChar));
+        Path filePath = Paths.get(buildPath(ctx, params.getPath(), null));
 
         if ( Files.exists( filePath) == false) {
 
@@ -797,8 +797,8 @@ public class JavaNIODiskDriver implements DiskInterface {
         //  Get the full path for the existing file and the new file name
         DeviceContext ctx = tree.getContext();
 
-        Path oldPath = Paths.get( FileName.buildPath(ctx.getDeviceName(), oldName, null, java.io.File.separatorChar));
-        Path newPath = Paths.get( FileName.buildPath(ctx.getDeviceName(), newName, null, java.io.File.separatorChar));
+        Path oldPath = Paths.get(buildPath(ctx, oldName, null));
+        Path newPath = Paths.get(buildPath(ctx, newName, null));
 
         //	Check if the current file/directory exists
         if ( Files.exists( oldPath) == false)
@@ -880,7 +880,7 @@ public class JavaNIODiskDriver implements DiskInterface {
 
         //  Create the full search path string
         JavaNIODeviceContext diskCtx = (JavaNIODeviceContext) tree.getContext();
-        String path = FileName.buildPath(diskCtx.getDeviceName(), null, searchPath, File.separatorChar);
+        String path = buildPath(diskCtx, null, searchPath);
         JavaNIOSearchContext ctx = null;
 
         try {
@@ -1109,5 +1109,17 @@ public class JavaNIODiskDriver implements DiskInterface {
      */
     public final static long getGlobalCreateDateTime() {
         return _globalCreateDate;
+    }
+
+    /**
+     * Thin wrapper around <code>FileName.buildPath()</code>.
+     *
+     * @param ctx
+     * @param path
+     * @param filename
+     * @return String
+     */
+    protected final static String buildPath(DeviceContext ctx, String path, String filename) {
+        return FileName.buildPath(ctx.getDeviceName(), path, filename, java.io.File.separatorChar);
     }
 }
